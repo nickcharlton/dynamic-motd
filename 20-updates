@@ -27,19 +27,22 @@ import apt_pkg
 DISTRO = subprocess.Popen(["lsb_release", "-c", "-s"],
                           stdout=subprocess.PIPE).communicate()[0].strip()
 
+
 class OpNullProgress(object):
     '''apt progress handler which supresses any output.'''
     def update(self, percent):
         pass
+
     def done(self):
         pass
+
 
 def is_security_upgrade(pkg):
     '''
     Checks to see if a package comes from a DISTRO-security source.
     '''
     security_package_sources = [("Ubuntu", "%s-security" % DISTRO),
-                               ("Debian", "%s-security" % DISTRO)]
+                                ("Debian", "%s-security" % DISTRO)]
 
     for (file, index) in pkg.file_list:
         for origin, archive in security_package_sources:
@@ -75,7 +78,7 @@ if depcache.broken_count > 0:
 try:
     # run distro-upgrade
     depcache.upgrade(True)
-    # reset if packages get marked as deleted -> we don't want to break anything
+    # reset if packages get marked as deleted
     if depcache.del_count > 0:
         depcache.init()
 
@@ -105,7 +108,8 @@ for pkg in cache.packages:
 
     # double check for security upgrades masked by another package
     for version in pkg.version_list:
-        if (current and apt_pkg.version_compare(version.ver_str, current.ver_str) <= 0):
+        if (current and apt_pkg.version_compare(version.ver_str,
+                                                current.ver_str) <= 0):
             continue
         if is_security_upgrade(version):
             security_upgrades += 1
@@ -113,4 +117,4 @@ for pkg in cache.packages:
 
 print "%d updates to install." % upgrades
 print "%d are security updates." % security_upgrades
-print "" # leave a trailing blank line
+print ""  # leave a trailing blank line

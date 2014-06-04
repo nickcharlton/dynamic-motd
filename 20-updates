@@ -30,7 +30,7 @@ DISTRO = subprocess.Popen(["lsb_release", "-c", "-s"],
 
 class OpNullProgress(object):
     '''apt progress handler which supresses any output.'''
-    def update(self, percent):
+    def update(self):
         pass
 
     def done(self):
